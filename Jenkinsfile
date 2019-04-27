@@ -97,9 +97,9 @@ def runApp(containerName, tag, dockerHubUser, httpPort){
     sh "docker pull $dockerHubUser/$containerName:$tag"
     try {
         print 'Stop all services..'
-
-        sh "docker rm $containerName"
         sh "docker stop $containerName"
+        sh "docker rm $containerName"
+
 
     } catch(error){
     print 'Error Stop Container Prod'
