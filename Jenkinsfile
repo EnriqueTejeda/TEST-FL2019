@@ -96,7 +96,7 @@ def imagePrune(containerName){
 
 def runApp(containerName, tag, dockerHubUser, httpPort){
     sh "docker pull $dockerHubUser/$containerName:$tag"
-    sh "docker stop httpd-apache2"
+    sh "docker stop $containerName"
     sh "docker run -d --rm -p $httpPort:80 --name $containerName  $dockerHubUser/$containerName:$tag"
     echo "Application started on port: $httpPort (http)"
 }
