@@ -1,4 +1,3 @@
-const chrome = require('selenium-webdriver/chrome');
 const { expect } = require('chai');
 const screen = {
   width: 1280,
@@ -23,9 +22,8 @@ describe('Test Index.html ', () => {
     it('Pagina: index.html - Seccion: Tabla Precio - Verificar Precio', async () => {
 
 
-        await driver.get('http://enriquetejeda.com:8089/index.html');
-        await driver.wait(until.elementLocated(By.className('phones')));
-        let link = await driver.findElements({css:'.price-2'});
+        await driver.get('http://enriquetejeda.com:8089');
+        let link = await driver.findElement({css:'.price-2'});
         text = await link.getText();
         expect(text).to.equal('$15');
 
