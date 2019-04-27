@@ -34,13 +34,13 @@ pipeline {
             stage('Build') {
                 steps {
                     echo 'Start Install Dependencies...'
-                    sh "docker run --rm --name npm-pipeline -v ${WORKDIRLOCAL}${NAMEJOB}:/usr/src/app -w /usr/src/app node:8-alpine npm install"
+                    sh "docker run --rm --name npm-pipeline -v ${WORKDIRLOCAL}${NAMEJOB}/Testing:/usr/src/app -w /usr/src/app node:8-alpine npm install"
                 }
             }
             stage('Test') {
                 steps {
                     echo 'Start Testing (Mocha)...'
-                    sh "docker run --rm --name npm-pipeline -v ${WORKDIRLOCAL}${NAMEJOB}:/usr/src/app -w /usr/src/app node:8-alpine npm test"
+                    sh "docker run --rm --name npm-pipeline -v ${WORKDIRLOCAL}${NAMEJOB}/Testing:/usr/src/app -w /usr/src/app node:8-alpine npm test"
 
                 }
             }
