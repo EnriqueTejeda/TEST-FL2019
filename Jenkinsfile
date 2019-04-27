@@ -89,7 +89,6 @@ def imagePrune(containerName){
         sh "docker stop node-firefox-1"
         sh "docker stop selenium-hub-testing-1"
         sh "docker stop httpd-apache2"
-        sh "docker stop $containerName"
 
     } catch(error){}
 }
