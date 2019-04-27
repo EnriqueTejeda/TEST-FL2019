@@ -24,7 +24,7 @@ pipeline {
             stage('Prepare Images') {
                 steps {
                     echo 'Run Docker Apache...'
-                    sh "docker run -d --rm -p ${HTTP_PORT}:80 --name httpd-apache2 -v ${WORKSPACE}${NAMEJOB}/WWW:/usr/local/apache2/htdocs/ httpd:2.4"
+                    sh "docker run -d --rm -p ${HTTP_PORT}:80 --name httpd-apache2 -v ${WORKDIRLOCAL}${NAMEJOB}/WWW:/usr/local/apache2/htdocs/ httpd:2.4"
                     echo 'Run Selenium Hub in the network grid...'
                     sh 'docker run --rm -d -p 4444:4444 --net grid --name selenium-hub-testing-1 selenium/hub'
                     echo 'Run a node of firefox... (Selenium Grid)'
@@ -51,7 +51,7 @@ pipeline {
                            pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
                   }
 
-                    runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT, $WORKDIRLOCAL$NAMEJOB)
+                    runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
                 }
             }
 
@@ -93,7 +93,7 @@ def imagePrune(containerName){
     } catch(error){}
 }
 
-def runApp(containerName, tag, dockerHubUser, httpPort, WORKSPACE){
+def runApp(containerName, tag, dockerHubUser, httpPort){
     sh "docker pull $dockerHubUser/$containerName:$tag"
     sh "docker stop httpd-apache2"
     sh "docker run -d --rm -p $httpPort:80 --name $containerName  $dockerHubUser/$containerName:$tag"
