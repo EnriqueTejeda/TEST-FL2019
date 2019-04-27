@@ -24,7 +24,7 @@ pipeline {
             stage('Prepare Images') {
                 steps {
                     echo 'Run Docker Apache...'
-                    runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT, $WORKDIRLOCAL$NAMEJOB)
+                    sh "docker run -d --rm -p $httpPort:80 --name httpd-apache2 -v $WORKSPACE:/usr/local/apache2/htdocs/ httpd:2.4"
                     echo 'Run Selenium Hub in the network grid...'
                     sh 'docker run --rm -d -p 4444:4444 --net grid --name selenium-hub-testing-1 selenium/hub'
                     echo 'Run a node of firefox... (Selenium Grid)'
@@ -50,6 +50,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerHubAccount', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                            pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
                   }
+
+                    runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT, $WORKDIRLOCAL$NAMEJOB)
                 }
             }
 
@@ -60,10 +62,6 @@ pipeline {
                 echo '===== ALWAYS ====='
                 imagePrune(CONTAINER_NAME)
             }
-        //    cleanup {
-        //           echo 'One way or another, I have finished'
-                   //deleteDir() /* clean up our workspace */
-        //       }
         }
 
 }
@@ -89,12 +87,14 @@ def imagePrune(containerName){
         sh "docker stop $containerName"
         sh "docker stop node-firefox-1"
         sh "docker stop selenium-hub-testing-1"
+        sh "docker stop httpd-apache2"
 
     } catch(error){}
 }
 
 def runApp(containerName, tag, dockerHubUser, httpPort, WORKSPACE){
-    //sh "docker pull $dockerHubUser/$containerName:$tag"
-    sh "docker run -d --rm -p $httpPort:80 --name $containerName -v $WORKSPACE:/usr/local/apache2/htdocs/ httpd:2.4"
+    sh "docker pull $dockerHubUser/$containerName:$tag"
+    sh "docker stop httpd-apache2"
+    sh "docker run -d --rm -p $httpPort:80 --name $containerName -v $WORKSPACE:/usr/local/apache2/htdocs/ $dockerHubUser/$containerName:$tag"
     echo "Application started on port: $httpPort (http)"
 }
