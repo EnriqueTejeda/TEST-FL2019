@@ -5,6 +5,7 @@ def DOCKER_HUB_USER="etejeda"
 def CONTAINER_NAME="dockerxc"
 def CONTAINER_TAG="beta${BUILD_NUMBER}"
 def HTTP_PORT="8089"
+def HTTP_PORT_PROD="80"
 def NAMEJOB="TEST-FL2019"
 def WORKDIRLOCAL="/var/lib/docker/volumes/jenkins-data/_data/workspace/"
 // Test
@@ -51,7 +52,7 @@ pipeline {
                            pushToImage(CONTAINER_NAME, CONTAINER_TAG, USERNAME, PASSWORD)
                   }
 
-                    runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT)
+                    runApp(CONTAINER_NAME, CONTAINER_TAG, DOCKER_HUB_USER, HTTP_PORT_PROD)
                 }
             }
 
