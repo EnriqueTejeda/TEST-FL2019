@@ -95,7 +95,18 @@ def imagePrune(containerName){
 
 def runApp(containerName, tag, dockerHubUser, httpPort){
     sh "docker pull $dockerHubUser/$containerName:$tag"
-    sh "docker stop $containerName"
-    sh "docker run -d --rm -p $httpPort:80 --name $containerName  $dockerHubUser/$containerName:$tag"
-    echo "Application started on port: $httpPort (http)"
+    try {
+        print 'Stop all services..'
+
+        sh "docker rm $containerName"
+        sh "docker stop $containerName"
+
+    } catch(error){
+    print 'Error Stop Container Prod'
+    }finally{
+      sh "docker run -d --rm -p $httpPort:80 --name $containerName  $dockerHubUser/$containerName:$tag"
+      echo "Application started on port: $httpPort (http)"
+    }
+
+
 }
